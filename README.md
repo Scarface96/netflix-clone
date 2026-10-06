@@ -1,70 +1,77 @@
-# Getting Started with Create React App
+# 🎬 Netflix Clone
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A Netflix-style streaming UI built with **React**, **Tailwind CSS** and **Firebase**. Users can sign up, log in, browse rows of real movie data from **TMDB**, and save favourites to their own "My Shows" list.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=react-router&logoColor=white)
+![TMDB](https://img.shields.io/badge/TMDB_API-01B4E4?style=flat-square&logo=themoviedatabase&logoColor=white)
 
-In the project directory, you can run:
+## ✨ Features
 
-### `yarn start`
+- 🔐 **Authentication** — sign up, log in and log out with Firebase Auth (email & password)
+- 🎞️ **Hero banner** — a random featured movie on the home page
+- 📚 **Movie rows** — horizontally scrolling rows for **Upcoming**, **Popular**, **Trending**, **Top Rated** and **Horror**, loaded live from the TMDB API
+- ❤️ **Save shows** — click the heart on any movie to save it to your account (stored in Cloud Firestore)
+- 👤 **My Shows** — an account page listing your saved movies, with the option to remove them
+- 🛡️ **Protected routes** — the account page is only available when logged in
+- 📱 **Responsive design** with Tailwind CSS
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Built With
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+| Area | Technology |
+|------|------------|
+| UI | React, Tailwind CSS, React Icons |
+| Routing | React Router |
+| Auth & database | Firebase Authentication, Cloud Firestore |
+| Data | TMDB API via Axios |
+| Hosting | Firebase Hosting |
 
-### `yarn test`
+## 📁 Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+src/
+├── components/
+│   ├── Main.jsx            # Hero banner
+│   ├── Row.jsx             # Scrolling movie row
+│   ├── Movie.jsx           # Movie card + save button
+│   ├── SavedShows.jsx      # User's saved list
+│   ├── Navbar.jsx
+│   └── ProtectedRoute.jsx
+├── context/AuthContext.js  # Auth state shared across the app
+├── pages/                  # Home, Login, Signup, Account
+├── Requests.js             # TMDB endpoints
+└── firebase.js             # Firebase setup
+```
 
-### `yarn build`
+## 🚀 Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone and install:
+   ```bash
+   git clone https://github.com/Scarface96/netflix-clone.git
+   cd netflix-clone
+   yarn install
+   ```
+2. Create a Firebase project with **Email/Password** auth and **Cloud Firestore** enabled.
+3. Create a `.env` file in the project root with your Firebase settings:
+   ```
+   REACT_APP_FIREBASE_API_KEY=...
+   REACT_APP_FIREBASE_AUTH_DOMAIN=...
+   REACT_APP_FIREBASE_PROJECT_ID=...
+   REACT_APP_FIREBASE_STORAGE_BUCKET=...
+   REACT_APP_MESSAGING_SENDER=...
+   REACT_APP_APP_ID=...
+   ```
+4. Add your own [TMDB API key](https://www.themoviedb.org/settings/api) in `src/Requests.js`.
+5. Run `yarn start` and open [http://localhost:3000](http://localhost:3000).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📚 What I Learned
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Using React Context for global auth state, protecting routes, reading and writing user data in Firestore, consuming a REST API, and styling quickly with Tailwind.
 
-### `yarn eject`
+> This is a personal learning project and is not affiliated with Netflix. Movie data is provided by TMDB.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+👤 **Tony Mulunda** — [GitHub @Scarface96](https://github.com/Scarface96)
