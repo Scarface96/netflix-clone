@@ -75,3 +75,7 @@ Using React Context for global auth state, protecting routes, reading and writin
 ---
 
 👤 **Tony Mulunda** — [GitHub @Scarface96](https://github.com/Scarface96)
+
+## About This Project
+
+A full-featured React portfolio application inspired by a streaming platform. It demonstrates authentication, protected routes, cloud data persistence, third-party API integration, responsive UI development and global state management with React and Firebase.
