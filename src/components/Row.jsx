@@ -1,50 +1,64 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import Movie from './Movie';
+import React, { useEffect, useRef, useState } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import MovieCard from './MovieCard';
+import { tmdb, withImages } from '../tmdb';
 
-const Row = ({ title, fetchURL, rowID }) => {
+const Row = ({ title, path, params }) => {
   const [movies, setMovies] = useState([]);
+  const [failed, setFailed] = useState(false);
+  const slider = useRef(null);
+  const paramsKey = JSON.stringify(params || {});
 
   useEffect(() => {
-    axios.get(fetchURL).then((response) => {
-      setMovies(response.data.results);
-    });
-  }, [fetchURL]);
+    const controller = new AbortController();
+    tmdb(path, JSON.parse(paramsKey), controller.signal)
+      .then((data) => setMovies(withImages(data.results)))
+      .catch((err) => err.name !== 'AbortError' && setFailed(true));
+    return () => controller.abort();
+  }, [path, paramsKey]);
 
-  const slideLeft = () => {
-    var slider = document.getElementById('slider' + rowID);
-    slider.scrollLeft = slider.scrollLeft - 500;
+  const slide = (dir) => {
+    const el = slider.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' });
   };
-  const slideRight = () => {
-    var slider = document.getElementById('slider' + rowID);
-    slider.scrollLeft = slider.scrollLeft + 500;
-  };
+
+  if (failed) return null;
 
   return (
-    <>
-      <h2 className='text-white font-bold md:text-xl p-4'>{title}</h2>
-      <div className='relative flex items-center group'>
-        <MdChevronLeft
-          onClick={slideLeft}
-          className='bg-white left-0 rounded-full absolute opacity-50 hover:opacity-100 cursor-pointer z-10 hidden group-hover:block'
-          size={40}
-        />
-        <div
-          id={'slider' + rowID}
-          className='w-full h-full overflow-x-scroll whitespace-nowrap scroll-smooth scrollbar-hide relative'
+    <section className='relative py-3' aria-label={title}>
+      <h2 className='px-4 pb-2 text-lg font-bold text-white md:px-12 md:text-xl'>{title}</h2>
+      <div className='group relative'>
+        <button
+          type='button'
+          onClick={() => slide(-1)}
+          aria-label={`Scroll ${title} left`}
+          className='absolute bottom-0 left-0 top-0 z-10 hidden w-12 items-center justify-center bg-black/50 text-white opacity-0 transition hover:bg-black/70 focus-visible:opacity-100 group-hover:opacity-100 md:flex'
         >
-          {movies.map((item, id) => (
-            <Movie key={id} item={item} />
-          ))}
+          <MdChevronLeft size={40} aria-hidden='true' />
+        </button>
+        <div
+          ref={slider}
+          className='flex snap-x scroll-px-4 gap-2 overflow-x-auto scroll-smooth px-4 scrollbar-hide md:scroll-px-12 md:px-12'
+        >
+          {movies.length === 0
+            ? Array.from({ length: 6 }, (_, i) => (
+                <div
+                  key={i}
+                  className='aspect-video w-[180px] shrink-0 animate-pulse rounded-md bg-neutral-800 sm:w-[220px] md:w-[260px] lg:w-[290px]'
+                />
+              ))
+            : movies.map((m) => <MovieCard key={m.id} movie={m} />)}
         </div>
-        <MdChevronRight
-          onClick={slideRight}
-          className='bg-white right-0 rounded-full absolute opacity-50 hover:opacity-100 cursor-pointer z-10 hidden group-hover:block'
-          size={40}
-        />
+        <button
+          type='button'
+          onClick={() => slide(1)}
+          aria-label={`Scroll ${title} right`}
+          className='absolute bottom-0 right-0 top-0 z-10 hidden w-12 items-center justify-center bg-black/50 text-white opacity-0 transition hover:bg-black/70 focus-visible:opacity-100 group-hover:opacity-100 md:flex'
+        >
+          <MdChevronRight size={40} aria-hidden='true' />
+        </button>
       </div>
-    </>
+    </section>
   );
 };
 
