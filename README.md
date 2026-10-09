@@ -1,6 +1,6 @@
-# 🎬 Netflix Clone
+# 🎬 Reelhouse — streaming app (Netflix-style clone)
 
-A Netflix-style streaming UI built with **React**, **Tailwind CSS** and **Firebase**. Users can sign up, log in, browse rows of real movie data from **TMDB**, and save favourites to their own "My Shows" list.
+A streaming-style film browser built with **React**, **Tailwind CSS** and **Firebase**, using live data and trailers from **TMDB**. It started as a Netflix clone and has grown into its own product, **Reelhouse**, with its own name and look.
 
 ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
@@ -8,69 +8,70 @@ A Netflix-style streaming UI built with **React**, **Tailwind CSS** and **Fireba
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=react-router&logoColor=white)
 ![TMDB](https://img.shields.io/badge/TMDB_API-01B4E4?style=flat-square&logo=themoviedatabase&logoColor=white)
 
+## 🌐 Live Demo
+
+**[scarface96.github.io/netflix-clone](https://scarface96.github.io/netflix-clone/)** — rebuilt and redeployed automatically on every push to `main`.
+
 ## ✨ Features
 
-- 🔐 **Authentication** — sign up, log in and log out with Firebase Auth (email & password)
-- 🎞️ **Hero banner** — a random featured movie on the home page
-- 📚 **Movie rows** — horizontally scrolling rows for **Upcoming**, **Popular**, **Trending**, **Top Rated** and **Horror**, loaded live from the TMDB API
-- ❤️ **Save shows** — click the heart on any movie to save it to your account (stored in Cloud Firestore)
-- 👤 **My Shows** — an account page listing your saved movies, with the option to remove them
-- 🛡️ **Protected routes** — the account page is only available when logged in
-- 📱 **Responsive design** with Tailwind CSS
+- 🎞️ **Hero banner** featuring a film that's trending today, with **Play trailer**, **More info** and **My List** buttons
+- 📚 **Nine rows**: trending, popular, top rated, coming soon, plus action, science fiction, comedy, animation and horror
+- 🎬 **Details dialog**: embedded YouTube trailer, rating, runtime, genres, director, cast and a "More like this" grid you can click through
+- 🔍 **Search** across the TMDB catalogue, with shareable URLs (`#/search?q=dune`)
+- ➕ **My List** for everyone: guests keep it in the browser; signed-in users keep it in Cloud Firestore, and anything saved as a guest is merged in when you sign in
+- 🔐 **Accounts** with Firebase Auth: sign up, sign in, password reset, clear error messages, and an account page
+- 🛡️ **Protected routes** that wait for Firebase to restore your session, so refreshing doesn't log you out
+- 📱 Responsive, keyboard accessible (focus rings, Esc closes dialogs, labelled controls), skeleton loading states
 
 ## 🛠️ Built With
 
 | Area | Technology |
 |------|------------|
-| UI | React, Tailwind CSS, React Icons |
-| Routing | React Router |
+| UI | React 18, Tailwind CSS, React Icons |
+| Routing | React Router 6 (`HashRouter`, so deep links work on GitHub Pages) |
+| State | React Context for auth, My List and the details dialog |
 | Auth & database | Firebase Authentication, Cloud Firestore |
-| Data | TMDB API via Axios |
-| Hosting | Firebase Hosting |
+| Data | TMDB API via `fetch` with `AbortController` |
+| Tests | Jest (`src/tmdb.test.js`) |
+| Hosting | GitHub Actions → GitHub Pages (`.github/workflows/deploy.yml`); `firebase.json` is kept for Firebase Hosting |
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── components/
-│   ├── Main.jsx            # Hero banner
-│   ├── Row.jsx             # Scrolling movie row
-│   ├── Movie.jsx           # Movie card + save button
-│   ├── SavedShows.jsx      # User's saved list
-│   ├── Navbar.jsx
-│   └── ProtectedRoute.jsx
-├── context/AuthContext.js  # Auth state shared across the app
-├── pages/                  # Home, Login, Signup, Account
-├── Requests.js             # TMDB endpoints
+│   ├── Hero.jsx            # Featured film banner
+│   ├── Row.jsx             # Scrolling row with skeletons
+│   ├── MovieCard.jsx       # Card with My List toggle
+│   ├── DetailsModal.jsx    # Trailer, details, cast, similar films
+│   ├── AuthForm.jsx        # Shared sign-in / sign-up form with poster wall
+│   ├── Navbar.jsx, Footer.jsx, ProtectedRoute.jsx
+├── context/
+│   ├── AuthContext.js      # Firebase auth state and friendly errors
+│   ├── ListContext.js      # My List: browser storage + Firestore sync
+│   └── DetailsContext.js   # Opens the details dialog from anywhere
+├── pages/                  # Home, Search, MyList, Account, Login, Signup
+├── tmdb.js                 # TMDB endpoints and helpers
+├── tmdb.test.js            # Tests for tmdb.js
 └── firebase.js             # Firebase setup
 ```
 
 ## 🚀 Getting Started
 
-1. Clone and install:
-   ```bash
-   git clone https://github.com/Scarface96/netflix-clone.git
-   cd netflix-clone
-   yarn install
-   ```
-2. Create a Firebase project with **Email/Password** auth and **Cloud Firestore** enabled.
-3. Create a `.env` file in the project root with your Firebase settings:
-   ```
-   REACT_APP_FIREBASE_API_KEY=...
-   REACT_APP_FIREBASE_AUTH_DOMAIN=...
-   REACT_APP_FIREBASE_PROJECT_ID=...
-   REACT_APP_FIREBASE_STORAGE_BUCKET=...
-   REACT_APP_MESSAGING_SENDER=...
-   REACT_APP_APP_ID=...
-   ```
-4. Add your own [TMDB API key](https://www.themoviedb.org/settings/api) in `src/Requests.js`.
-5. Run `yarn start` and open [http://localhost:3000](http://localhost:3000).
+```bash
+git clone https://github.com/Scarface96/netflix-clone.git
+cd netflix-clone
+npm install
+npm start
+```
+
+The repo's `.env` already points at the demo Firebase project. To use your own, create a Firebase project with **Email/Password** auth and **Cloud Firestore**, and replace the `REACT_APP_FIREBASE_*` values in `.env`. To use your own TMDB key, set `REACT_APP_TMDB_KEY`.
 
 ## 📚 What I Learned
 
-Using React Context for global auth state, protecting routes, reading and writing user data in Firestore, consuming a REST API, and styling quickly with Tailwind.
+Using React Context for global state, protecting routes without flicker, syncing data between localStorage and Firestore, embedding trailers, building accessible dialogs, and deploying a single-page app to GitHub Pages.
 
-> This is a personal learning project and is not affiliated with Netflix. Movie data is provided by TMDB.
+> Reelhouse is a personal portfolio project and is not affiliated with Netflix or any streaming service. Film data and images are provided by TMDB; this product uses the TMDB API but is not endorsed or certified by TMDB.
 
 ---
 
@@ -78,4 +79,4 @@ Using React Context for global auth state, protecting routes, reading and writin
 
 ## About This Project
 
-A full-featured React portfolio application inspired by a streaming platform. It demonstrates authentication, protected routes, cloud data persistence, third-party API integration, responsive UI development and global state management with React and Firebase.
+A full-featured React portfolio application inspired by streaming platforms. It demonstrates authentication, protected routes, cloud data persistence, third-party API integration, responsive UI development and global state management with React and Firebase.

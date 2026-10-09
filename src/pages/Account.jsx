@@ -1,24 +1,50 @@
 import React from 'react';
-import SavedShows from '../components/SavedShows';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserAuth } from '../context/AuthContext';
+import { useMyList } from '../context/ListContext';
 
 const Account = () => {
+  const { user, logOut } = UserAuth();
+  const { list, cloud } = useMyList();
+  const navigate = useNavigate();
+  const since = user?.metadata?.creationTime && new Date(user.metadata.creationTime);
+
   return (
-    <>
-      <div className='w-full text-white'>
-        <img
-          className='w-full h-[400px] object-cover'
-          src='https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-bcae-07a3f8dc141a/f6d7434e-d6de-4185-a6d4-c77a2d08737b/US-en-20220502-popsignuptwoweeks-perspective_alpha_website_medium.jpg'
-          alt='/'
-        />
-        <div className='bg-black/60 fixed top-0 left-0 w-full h-[550px]'></div>
-        <div className='absolute top-[20%] p-4 md:p-8'>
-          <h1 className='text-3xl md:text-5xl font-bold'>My Shows</h1>
+    <main className='min-h-screen px-4 pb-10 pt-28 text-white md:px-12'>
+      <h1 className='font-display text-4xl md:text-5xl'>Account</h1>
+      <dl className='mt-8 max-w-xl divide-y divide-neutral-800 border-y border-neutral-800'>
+        <div className='flex justify-between gap-4 py-4'>
+          <dt className='text-neutral-400'>Email</dt>
+          <dd className='truncate font-bold'>{user?.email}</dd>
         </div>
-      </div>
-      <SavedShows />
-    </>
+        {since && (
+          <div className='flex justify-between gap-4 py-4'>
+            <dt className='text-neutral-400'>Member since</dt>
+            <dd>{since.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</dd>
+          </div>
+        )}
+        <div className='flex justify-between gap-4 py-4'>
+          <dt className='text-neutral-400'>My List</dt>
+          <dd>
+            <Link to='/my-list' className='underline hover:text-brand'>
+              {list.length} {list.length === 1 ? 'film' : 'films'}
+            </Link>
+            <span className='ml-2 text-sm text-neutral-500'>{cloud ? 'synced' : 'this browser only'}</span>
+          </dd>
+        </div>
+      </dl>
+      <button
+        type='button'
+        onClick={async () => {
+          await logOut();
+          navigate('/');
+        }}
+        className='mt-8 rounded border border-white/60 px-5 py-2 font-bold hover:border-white'
+      >
+        Sign out
+      </button>
+    </main>
   );
 };
 
-
-export default Account
+export default Account;
